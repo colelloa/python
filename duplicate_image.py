@@ -1,6 +1,7 @@
 from PIL import Image, ImageFilter, ImageDraw
 
-#picture naming convention:x-coord y-coord alpha
+#image naming convention xcoord_ycoord_alpha.png 
+#where coords are those of left corner of box to fill
 
 class ImageDuplicator:
 
@@ -16,18 +17,20 @@ class ImageDuplicator:
         del img #special garbage collection 
 
 
-    def draw_circle(self, center):
+    def draw_circle(self, left_corner):
         #create draw object from original path
         img = Image.open(self.grass_path)
         draw_obj = ImageDraw.Draw(img)
 
         #draw circle with diameter=30 at center input
-        draw_obj.ellipse((center[0], center[1], 30, 30), fill = 'white', outline ='white')
+        x0 = left_corner[0]
+        y0 = left_corner[1]
+        x1 = x0 + 30 #30x30 box to make circle
+        y1 = y0 + 30
+        draw_obj.ellipse((x0, y0, x1, y1), fill = 'white', outline ='white')
         
-
-        #save image according to convention x-coord y-coord alpha
-        #alpha is 1.0 for newly drawn circle, represented as 10
-        new_path = "training_images/{0}{1}100.png".format(center[0], center[1])
+        #alpha is 1.00 for newly drawn circle, represented as 100
+        new_path = "training_images/{0}_{1}_100.png".format(x0, y0)
         img.save(new_path)
         del draw_obj #garbage collection
         del img 
@@ -40,7 +43,7 @@ class ImageDuplicator:
         background = Image.open(background_path)
         ball = Image.open(ball_path)
 
-        final_path = "training_images/{0}{1}{2}.png".format(center[0], center[1], percentage)
+        final_path = "training_images/{0}_{1}_{2}.png".format(center[0], center[1], percentage)
 
         out = Image.blend(background, ball, alpha)
         out.save(final_path) #example of convention here
