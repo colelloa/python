@@ -1,12 +1,13 @@
-from PIL import Image, ImageFilter, ImageDraw
+from PIL import Image, ImageDraw
 
 #image naming convention xcoord_ycoord_alpha.png 
 #where coords are those of left corner of box to fill
 
 class ImageDuplicator:
 
-    def __init__(self, orig_path, diameter):
+    def __init__(self, orig_path, diameter, root_dir):
         self.BALL_DIAMETER = diameter
+        self.IMAGE_ROOT_DIRECTORY = root_dir
         # open grass image
         self.grass_path = orig_path
 
@@ -30,7 +31,7 @@ class ImageDuplicator:
         draw_obj.ellipse((x0, y0, x1, y1), fill = 'white', outline ='white')
         
         #alpha is 1.00 for newly drawn circle, represented as 100
-        new_path = "training_images/{0}_{1}_100.png".format(x0, y0)
+        new_path = "{0}/{1}_{2}_100.png".format(self.IMAGE_ROOT_DIRECTORY, x0, y0)
         img.save(new_path)
 
         del draw_obj #garbage collection
@@ -43,11 +44,10 @@ class ImageDuplicator:
         background = Image.open(background_path)
         ball = Image.open(ball_path)
 
-        final_path = "training_images/{0}_{1}_{2}.png".format(left_corner[0], left_corner[1], percentage)
+        final_path = "{0}/{1}_{2}_{3}.png".format(self.IMAGE_ROOT_DIRECTORY, left_corner[0], left_corner[1], percentage)
 
         out = Image.blend(background, ball, alpha)
         out.save(final_path)
-        # out.show()
 
         del background
         del ball 
